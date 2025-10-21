@@ -9,11 +9,10 @@
   
   # Directory that contains the deploy-ready files
   publish = "dist/public"
-  
-  # Node version for builds
-  environment = { NODE_VERSION = "20" }
 
 [build.environment]
+  # Node version for builds
+  NODE_VERSION = "20"
   # Environment variables for build
   VITE_API_URL = "/"
 
