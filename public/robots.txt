@@ -1,0 +1,35 @@
+# Robots.txt for AstroSEO
+# Allow all crawlers
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://analytix.sa/sitemap.xml
+
+# Crawl-delay for responsible crawling
+Crawl-delay: 1
+
+# Disallow admin areas
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+# Allow search engines to access CSS and JS
+User-agent: *
+Allow: /*.css$
+Allow: /*.js$
+Allow: /assets/
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

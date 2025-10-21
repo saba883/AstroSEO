@@ -1,0 +1,263 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'wouter';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Save, Eye } from 'lucide-react';
+import AdminLayout from './AdminLayout';
+
+interface ServiceFormData {
+  title: string;
+  slug: string;
+  content: string;
+  metaTitle: string;
+  metaDescription: string;
+}
+
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+};
+
+const EditService: React.FC = () => {
+  const [, setLocation] = useLocation();
+  const params = useParams();
+  const serviceId = params.id;
+  
+  const [formData, setFormData] = useState<ServiceFormData>({
+    title: '',
+    slug: '',
+    content: '',
+    metaTitle: '',
+    metaDescription: '',
+  });
+
+  // Fetch the service to edit
+  const { data: service, isLoading } = useQuery({
+    queryKey: ['service', serviceId],
+    queryFn: async () => {
+      const response = await fetch(`/api/services/${serviceId}`);
+      if (!response.ok) throw new Error('Failed to fetch service');
+      return response.json();
+    },
+    enabled: !!serviceId,
+  });
+
+  // Update form data when service is loaded
+  useEffect(() => {
+    if (service) {
+      setFormData({
+        title: service.title || '',
+        slug: service.slug || '',
+        content: service.content || '',
+        metaTitle: service.metaTitle || '',
+        metaDescription: service.metaDescription || '',
+      });
+    }
+  }, [service]);
+
+  // Update service mutation
+  const updateServiceMutation = useMutation({
+    mutationFn: async (serviceData: ServiceFormData) => {
+      const response = await fetch(`/api/services/${serviceId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(serviceData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update service');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Service updated successfully!',
+      });
+      setLocation('/admin/services');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleInputChange = (field: keyof ServiceFormData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+      // Auto-generate slug when title changes (only if slug is empty or matches the generated one)
+      ...(field === 'title' && (prev.slug === '' || prev.slug === generateSlug(prev.title)) && { slug: generateSlug(value) }),
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateServiceMutation.mutate(formData);
+  };
+
+  const handlePreview = () => {
+    // For now, just show a preview in console or alert
+    // In a real app, you might want to open a preview modal
+    alert('Preview functionality would open a modal showing how the service page will look');
+  };
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading service...</div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (!service) {
+    return (
+      <AdminLayout>
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold mb-4">Service not found</h2>
+          <Button onClick={() => setLocation('/admin/services')}>
+            Back to Services
+          </Button>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLocation('/admin/services')}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Services
+          </Button>
+          <h1 className="text-3xl font-bold">Edit Service</h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Service Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Enter service title"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="slug">Slug *</Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) => handleInputChange('slug', e.target.value)}
+                    placeholder="url-friendly-slug"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content">Content *</Label>
+                <Textarea
+                  id="content"
+                  value={formData.content}
+                  onChange={(e) => handleInputChange('content', e.target.value)}
+                  placeholder="Describe your service in detail..."
+                  rows={8}
+                  required
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>SEO Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="metaTitle">Meta Title</Label>
+                <Input
+                  id="metaTitle"
+                  value={formData.metaTitle}
+                  onChange={(e) => handleInputChange('metaTitle', e.target.value)}
+                  placeholder="SEO title for search engines"
+                  maxLength={60}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {formData.metaTitle.length}/60 characters
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="metaDescription">Meta Description</Label>
+                <Textarea
+                  id="metaDescription"
+                  value={formData.metaDescription}
+                  onChange={(e) => handleInputChange('metaDescription', e.target.value)}
+                  placeholder="Brief description for search engines"
+                  rows={3}
+                  maxLength={160}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {formData.metaDescription.length}/160 characters
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePreview}
+              disabled={!formData.title || !formData.content}
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Preview
+            </Button>
+            <Button
+              type="submit"
+              disabled={updateServiceMutation.isPending || !formData.title || !formData.content || !formData.slug}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {updateServiceMutation.isPending ? 'Updating...' : 'Update Service'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </AdminLayout>
+  );
+};
+
+export default EditService;

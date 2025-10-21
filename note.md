@@ -1,0 +1,1 @@
+so you are the expert in seo techninacal and programiticall you have the 10 years of seo extertize in dev and content technicnan so pleasn this website front end and backed asper the @InsertService  first analysis the .md files 

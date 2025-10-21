@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin, ArrowRight } from 'lucide-react';
+import { Link } from 'wouter';
 
 interface LocationCardProps {
   city: string;
@@ -47,9 +48,11 @@ export default function LocationCard({ city, description, image, stats }: Locati
           </div>
         </div>
         
-        <Button variant="ghost" className="w-full gap-2" data-testid={`button-view-${city.toLowerCase()}`}>
-          View {city} Services
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        <Button variant="ghost" className="w-full gap-2" asChild data-testid={`button-view-${city.toLowerCase()}`}>
+          <Link href={`/locations#${city.toLowerCase()}`}>
+            View {city} Services
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </Button>
       </CardContent>
     </Card>
