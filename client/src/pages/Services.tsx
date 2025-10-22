@@ -1,24 +1,15 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Briefcase, Calculator, Sparkles, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
-import { type Service } from '@shared/schema';
+import { staticServices } from '@/data/staticData';
 
 const Services: React.FC = () => {
-  const { data: services = [], isLoading } = useQuery({
-    queryKey: ['services'],
-    queryFn: async () => {
-      const response = await fetch('/api/services');
-      if (!response.ok) throw new Error('Failed to fetch services');
-      const allServices = await response.json() as Service[];
-      // Filter out city-specific services
-      return allServices.filter(service => !service.slug.includes('-in-'));
-    },
-  });
+  const services = staticServices;
+  const isLoading = false;
 
   const getCategoryColor = (title: string) => {
     if (title.toLowerCase().includes('llc')) return 'blue';

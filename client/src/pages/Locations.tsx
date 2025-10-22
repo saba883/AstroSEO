@@ -10,7 +10,7 @@ const locations = [
   {
     city: 'Riyadh',
     description: 'The heart of Saudi business and government operations',
-    image: '/images/locations/riyadh-business-district.jpg',
+    image: '/images/locations/riyadh-1.jpg',
     stats: { businesses: '850+', growth: '+32%' },
     features: ['Capital Business Hub', 'Government Headquarters', 'Tech Innovation Center'],
     color: 'blue',
@@ -18,7 +18,7 @@ const locations = [
   {
     city: 'Jeddah',
     description: 'International business gateway and commercial center',
-    image: '/images/locations/jeddah-corniche.jpg',
+    image: '/images/locations/jeddah-1.jpg',
     stats: { businesses: '620+', growth: '+28%' },
     features: ['Gateway to Trade', 'Port City Advantages', 'Tourism Hub'],
     color: 'purple',
@@ -26,7 +26,7 @@ const locations = [
   {
     city: 'Dammam',
     description: 'Eastern Province industrial and energy sector hub',
-    image: '/images/locations/dammam-skyline.jpg',
+    image: '/images/locations/dammam-1.jpg',
     stats: { businesses: '480+', growth: '+25%' },
     features: ['Industrial Powerhouse', 'Oil & Gas Center', 'Logistics Hub'],
     color: 'orange',
@@ -34,7 +34,7 @@ const locations = [
   {
     city: 'Al Khobar',
     description: 'Modern business district with international presence',
-    image: '/images/locations/al-khobar-towers.jpg',
+    image: '/images/locations/al-khobar-1.jpg',
     stats: { businesses: '350+', growth: '+22%' },
     features: ['Business Excellence', 'Expat Community', 'Modern Infrastructure'],
     color: 'pink',
