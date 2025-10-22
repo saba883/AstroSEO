@@ -111,7 +111,7 @@ LLC formation in Saudi Arabia offers excellent opportunities for foreign investo
 
 For personalized assistance with your LLC formation, contact our expert team who has helped over 2,200 companies establish their presence in Saudi Arabia.
       `,
-      metaTitle: 'LLC Formation Saudi Arabia 2024 | Complete Guide | Analytix',
+      metaTitle: 'LLC Formation Saudi Arabia 2024 | Complete Guide | Registerinksa',
       metaDescription: 'Complete guide to LLC formation in Saudi Arabia 2024. Learn requirements, process, costs, and timeline. Expert assistance available.',
       featuredImage: '/images/blog/llc-guide-1.jpg',
       categoryId: createdCategories.find(c => c.name === 'Company Formation')?.id || createdCategories[0]?.id,
@@ -2630,7 +2630,7 @@ A: Yes, 100% foreign ownership is permitted in most sectors in ${city}.
 **Q: What is the minimum capital requirement?**
 A: This depends on the business activity and legal structure.
         `,
-        metaTitle: `${service} in ${city} | 100% Foreign Ownership | Analytix`,
+        metaTitle: `${service} in ${city} | 100% Foreign Ownership | Registerinksa`,
         metaDescription: `Expert ${service} in ${city}. 2200+ clients served. Fast LLC registration, MISA license, CR processing. Free consultation.`,
       };
 

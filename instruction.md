@@ -3,7 +3,7 @@
 ## Meta Tags Structure
 
 ```html
-<title>{Service} in {City} | 100% Foreign Ownership | Analytix</title>
+<title>{Service} in {City} | 100% Foreign Ownership | Registerinksa</title>
 <meta name="description" content="Expert {service} in {city}. 2200+ clients served. Fast LLC registration, MISA license, CR processing. Free consultation.">
 ```
 
@@ -14,8 +14,8 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Analytix",
-  "url": "https://yoursite.com",
+  "name": "Registerinksa",
+  "url": "https://registerinksa.com",
   "logo": "https://yoursite.com/logo.png"
 }
 ```
@@ -25,7 +25,7 @@
 {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  "name": "Analytix - {City}",
+  "name": "Registerinksa - {City}",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "{City}",
@@ -236,7 +236,7 @@ LLC formation in Saudi Arabia typically costs between 15,000-25,000 SAR, dependi
 ### Anchor Text Variations
 - Exact match: "{service} in {city}"
 - Partial match: "learn more about {service}"
-- Branded: "Analytix {service}"
+- Branded: "Registerinksa {service}"
 - Generic: "click here for more information"
 
 ## Image Optimization
@@ -327,4 +327,3 @@ Timestamps:
 - "Download Setup Checklist"
 - "Speak with Expert"
 - "Start Your Business Today"
-

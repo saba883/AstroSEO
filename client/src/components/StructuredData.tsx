@@ -32,8 +32,8 @@ export function StructuredData({ type, data }: StructuredDataProps) {
         return {
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "Analytix Business Consultants",
-          "url": "https://analytix.sa",
+          "name": "Registerinksa Business Consultants",
+          "url": "https://registerinksa.com",
           "logo": "https://analytix.sa/logo.png",
           "contactPoint": {
             "@type": "ContactPoint",
@@ -52,8 +52,8 @@ export function StructuredData({ type, data }: StructuredDataProps) {
         return {
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
-          "name": `Analytix - ${data.city || 'Saudi Arabia'}`,
-          "image": "https://analytix.sa/office.jpg",
+          "name": `Registerinksa - ${data.city || 'Saudi Arabia'}`,
+          "image": "https://registerinksa.com/office.jpg",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": data.streetAddress || "King Fahd Road",
@@ -92,7 +92,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
           "serviceType": data.serviceType,
           "provider": {
             "@type": "Organization",
-            "name": "Analytix Business Consultants"
+            "name": "Registerinksa Business Consultants"
           },
           "areaServed": {
             "@type": "Country",

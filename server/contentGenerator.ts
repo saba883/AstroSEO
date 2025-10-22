@@ -334,7 +334,7 @@ function generateSEOTags(service: string, city: string, contentType: string) {
   const templates: Record<string, { title: string; metaTitle: string; metaDescription: string; h1: string }> = {
     service: {
       title: `${service} in ${city} | Fast & Reliable Setup ${currentYear}`,
-      metaTitle: `${service} in ${city} | 100% Foreign Ownership | Analytix`,
+      metaTitle: `${service} in ${city} | 100% Foreign Ownership | Registerinksa`,
       metaDescription: `Expert ${service} in ${city}. 2200+ clients served. Fast LLC registration, MISA license, CR processing. Free consultation. ✓ 2-3 weeks setup.`,
       h1: `${service} in ${city}`
     },
@@ -368,8 +368,8 @@ function generateSchemaMarkup(service: string, city: string, contentType: string
   schemas.push({
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Analytix Business Consultants",
-    "url": "https://analytix.sa",
+    "name": "Registerinksa Business Consultants",
+    "url": "https://registerinksa.com",
     "logo": "https://analytix.sa/logo.png",
     "contactPoint": {
       "@type": "ContactPoint",
@@ -384,7 +384,7 @@ function generateSchemaMarkup(service: string, city: string, contentType: string
   schemas.push({
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    "name": `Analytix - ${city}`,
+    "name": `Registerinksa - ${city}`,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": city,

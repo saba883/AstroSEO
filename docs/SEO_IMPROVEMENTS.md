@@ -105,7 +105,7 @@ const TableOfContents = ({ headings }) => {
 
 2. **Meta Tags Optimization**
    ```html
-   <title>Company Formation in Saudi Arabia | 100% Foreign Ownership | Analytix</title>
+   <title>Company Formation in Saudi Arabia | 100% Foreign Ownership | Registerinksa</title>
    <meta name="description" content="Expert company formation services in Saudi Arabia. LLC registration, MISA license, CR processing. 2200+ clients served. ✓ 2-3 weeks setup.">
    ```
 

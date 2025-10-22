@@ -9,7 +9,7 @@ export default function TestimonialCardExample() {
         role="CEO"
         company="TechVenture Inc"
         location="Riyadh, Saudi Arabia"
-        content="Analytix made our business setup incredibly smooth. Their expertise in Saudi regulations saved us months of paperwork and hassle."
+        content="Registerinksa made our business setup incredibly smooth. Their expertise in Saudi regulations saved us months of paperwork and hassle."
         image={testimonialImage}
         rating={5}
       />

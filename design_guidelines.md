@@ -1,4 +1,4 @@
-# Design Guidelines: Analytix Business Formation Consultancy
+# Design Guidelines: Registerinksa Business Formation Consultancy
 
 ## Design Approach
 
@@ -116,7 +116,7 @@
 1. Hero with diagonal split design
 2. Trust indicators bar (partners logos)
 3. Services grid (6 cards, 3 columns)
-4. "Why Choose Analytix" - comparison table
+4. "Why Choose Registerinksa" - comparison table
 5. Success metrics section
 6. Client testimonials carousel
 7. Location map with coverage areas
