@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRoute } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ArrowRight, CheckCircle, Clock, Users, Shield, Calculator, FileText, Briefcase, Building2 } from 'lucide-react';
-import { type Service } from '@shared/schema';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { FAQSection, generateServiceFAQs } from '@/components/StructuredData';
@@ -18,6 +16,7 @@ import ServicePricing from '@/components/ServicePricing';
 import ServiceContent from '@/components/ServiceContent';
 import ServiceLocations from '@/components/ServiceLocations';
 import RelatedServicesSection from '@/components/RelatedServicesSection';
+import { allServices, staticServices } from '@/data/staticData';
 
 // Service-specific images
 const serviceImages: Record<string, string> = {
@@ -42,32 +41,6 @@ const locationImages: Record<string, string> = {
 const defaultServiceImage = '/images/general/business-partnership-1.jpg';
 
 
-async function fetchServiceBySlug(slug: string): Promise<Service> {
-  const res = await fetch(`/api/services/slug/${slug}`);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
-}
-
-
-
-
-async function fetchServicesByBaseSlug(baseSlug: string): Promise<Service[]> {
-  const res = await fetch(`/api/services/base/${baseSlug}`);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
-}
-
-async function fetchAllServices(): Promise<Service[]> {
-  const res = await fetch('/api/services');
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
-}
 
 
 
@@ -250,36 +223,36 @@ const ServicePage: React.FC = () => {
     ];
   };
 
-  const { data: service, isLoading, error } = useQuery({
-    queryKey: ['service', slug || baseSlug],
-    queryFn: () => fetchServiceBySlug(slug || baseSlug!),
-    enabled: !!(slug || (baseSlug && isHubPage)),
-  });
+  // Get service data from static data
+  const service = useMemo(() => {
+    const searchSlug = slug || baseSlug;
+    return allServices.find(s => s.slug === searchSlug);
+  }, [slug, baseSlug]);
 
-  const { data: cityServices, isLoading: isLoadingCities } = useQuery({
-    queryKey: ['cityServices', baseSlug],
-    queryFn: () => fetchServicesByBaseSlug(baseSlug!),
-    enabled: !!baseSlug && isHubPage,
-  });
+  // Get city-specific services for hub pages
+  const cityServices = useMemo(() => {
+    if (!baseSlug || !isHubPage) return [];
+    return allServices.filter(s => s.slug.startsWith(`${baseSlug}-in-`));
+  }, [baseSlug, isHubPage]);
 
-  // Fetch all services for interlinking
-  const { data: allServices = [] } = useQuery({
-    queryKey: ['allServices'],
-    queryFn: fetchAllServices,
-    enabled: !isHubPage && !!service,
-  });
+  const isLoading = false;
+  const error = !service && !isHubPage ? new Error('Service not found') : null;
 
   // Get same service in other locations
-  const sameServiceOtherLocations = allServices.filter(s => 
-    s.slug.startsWith(`${baseSlug}-in-`) && s.slug !== slug
-  ).slice(0, 5);
+  const sameServiceOtherLocations = useMemo(() => {
+    return allServices.filter(s => 
+      s.slug.startsWith(`${baseSlug}-in-`) && s.slug !== slug
+    ).slice(0, 5);
+  }, [baseSlug, slug]);
 
   // Get related services in same location
-  const relatedServicesInLocation = allServices.filter(s => {
-    if (!citySlug || !s.slug.includes('-in-')) return false;
-    const serviceCity = s.slug.split('-in-')[1];
-    return serviceCity === citySlug && s.slug !== slug;
-  }).slice(0, 5);
+  const relatedServicesInLocation = useMemo(() => {
+    return allServices.filter(s => {
+      if (!citySlug || !s.slug.includes('-in-')) return false;
+      const serviceCity = s.slug.split('-in-')[1];
+      return serviceCity === citySlug && s.slug !== slug;
+    }).slice(0, 5);
+  }, [citySlug, slug]);
 
   const formatContent = (content: string) => {
     // Simple markdown-like formatting for display
@@ -293,19 +266,6 @@ const ServicePage: React.FC = () => {
       .replace(/^(.*)$/gm, '<p class="mb-4">$1</p>');
   };
 
-  if (isLoading || (isHubPage && isLoadingCities)) {
-    return (
-      <div className="min-h-screen">
-        <Header />
-        <main className="max-w-4xl mx-auto px-4 py-16">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-lg">Loading service...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   if (!isHubPage && (error || !service)) {
     return (

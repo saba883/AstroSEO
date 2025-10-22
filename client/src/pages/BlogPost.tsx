@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useParams } from 'wouter';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
@@ -27,20 +26,8 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import RelatedPosts from '@/components/RelatedPosts';
 import RelatedServices from '@/components/RelatedServices';
 import { TableOfContents, extractHeadings } from '@/components/TableOfContents';
+import { staticBlogPosts } from '@/data/staticData';
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  metaTitle: string | null;
-  metaDescription: string | null;
-  featuredImage: string | null;
-  authorId: string | null;
-  relatedServices: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const BlogPost: React.FC = () => {
   const params = useParams();
@@ -48,21 +35,13 @@ const BlogPost: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [readProgress, setReadProgress] = useState(0);
 
-  // Fetch the specific blog post
-  const { data: post, isLoading, error } = useQuery({
-    queryKey: ['blogPost', slug],
-    queryFn: async () => {
-      const response = await fetch(`/api/blog/posts/slug/${slug}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Post not found');
-        }
-        throw new Error('Failed to fetch blog post');
-      }
-      return response.json() as Promise<BlogPost>;
-    },
-    enabled: !!slug,
-  });
+  // Get the blog post from static data
+  const post = useMemo(() => {
+    return staticBlogPosts.find(p => p.slug === slug);
+  }, [slug]);
+
+  const isLoading = false;
+  const error = !post ? new Error('Post not found') : null;
 
   // Track reading progress
   useEffect(() => {
@@ -236,7 +215,11 @@ const BlogPost: React.FC = () => {
                 <header className="mb-8">
                   {/* Categories */}
                   <div className="flex gap-2 mb-4">
-                    <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">Business Setup</Badge>
+                    <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">
+                      {post.category === 'business-setup' ? 'Business Setup' : 
+                       post.category === 'legal' ? 'Legal' : 
+                       post.category === 'tax' ? 'Tax' : 'Guide'}
+                    </Badge>
                     <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400">Saudi Arabia</Badge>
                   </div>
 
@@ -258,7 +241,7 @@ const BlogPost: React.FC = () => {
                         <AvatarFallback>AA</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">RegisterInKSA Team</p>
+                        <p className="font-semibold text-gray-900 dark:text-white">{post.author}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
@@ -266,7 +249,7 @@ const BlogPost: React.FC = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {getReadingTime(post.content)} min read
+                            {post.readTime}
                           </span>
                           <span className="flex items-center gap-1">
                             <Eye className="w-3 h-3" />
@@ -340,10 +323,20 @@ const BlogPost: React.FC = () => {
                 <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex flex-wrap gap-2 mb-8">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Tags:</span>
-                    <Badge variant="secondary">LLC Formation</Badge>
-                    <Badge variant="secondary">MISA License</Badge>
-                    <Badge variant="secondary">Business Setup</Badge>
+                    {post.category === 'business-setup' && (
+                      <>
+                        <Badge variant="secondary">Business Setup</Badge>
+                        <Badge variant="secondary">Company Formation</Badge>
+                      </>
+                    )}
+                    {post.category === 'legal' && (
+                      <>
+                        <Badge variant="secondary">Legal</Badge>
+                        <Badge variant="secondary">Regulations</Badge>
+                      </>
+                    )}
                     <Badge variant="secondary">Saudi Arabia</Badge>
+                    <Badge variant="secondary">Foreign Investment</Badge>
                   </div>
 
                   {/* Author Bio */}
@@ -415,13 +408,11 @@ const BlogPost: React.FC = () => {
                 </div>
 
                 {/* Related Services */}
-                {post?.relatedServices && (
-                  <div>
-                    <RelatedServices 
-                      serviceIds={JSON.parse(post.relatedServices)} 
-                    />
-                  </div>
-                )}
+                <div>
+                  <RelatedServices 
+                    serviceIds={['llc-formation', 'misa-license', 'commercial-registration']} 
+                  />
+                </div>
 
                 {/* Newsletter CTA */}
                 <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-6 text-white">

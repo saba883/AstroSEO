@@ -1,35 +1,19 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-
-interface Service {
-  id: string;
-  title: string;
-  slug: string;
-  content: string | null;
-  metaTitle: string | null;
-  metaDescription: string | null;
-}
+import { staticServices } from '@/data/staticData';
 
 interface RelatedServicesProps {
   serviceIds: string[];
 }
 
 const RelatedServices: React.FC<RelatedServicesProps> = ({ serviceIds }) => {
-  const { data: services = [] } = useQuery({
-    queryKey: ['services'],
-    queryFn: async () => {
-      const response = await fetch('/api/services');
-      if (!response.ok) throw new Error('Failed to fetch services');
-      return response.json() as Promise<Service[]>;
-    },
-  });
-
   // Filter services to only show the related ones
-  const relatedServices = services.filter(service => serviceIds.includes(service.id));
+  const relatedServices = useMemo(() => {
+    return staticServices.filter(service => serviceIds.includes(service.slug));
+  }, [serviceIds]);
 
   if (relatedServices.length === 0) {
     return null;

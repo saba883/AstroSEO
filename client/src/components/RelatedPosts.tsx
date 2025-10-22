@@ -1,37 +1,21 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  metaTitle: string | null;
-  metaDescription: string | null;
-  featuredImage: string | null;
-  authorId: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import { staticBlogPosts } from '@/data/staticData';
 
 interface RelatedPostsProps {
   currentSlug: string;
 }
 
 const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentSlug }) => {
-  const { data: relatedPosts = [], isLoading } = useQuery({
-    queryKey: ['relatedPosts', currentSlug],
-    queryFn: async () => {
-      const response = await fetch(`/api/blog/posts/related/${currentSlug}`);
-      if (!response.ok) throw new Error('Failed to fetch related posts');
-      return response.json() as Promise<BlogPost[]>;
-    },
-    enabled: !!currentSlug,
-  });
+  // Get related posts (all posts except the current one)
+  const relatedPosts = useMemo(() => {
+    return staticBlogPosts.filter(post => post.slug !== currentSlug).slice(0, 3);
+  }, [currentSlug]);
+
+  const isLoading = false;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -41,17 +25,6 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentSlug }) => {
     });
   };
 
-  const getReadingTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const wordCount = content.split(/\s+/).length;
-    return Math.ceil(wordCount / wordsPerMinute);
-  };
-
-  const truncateContent = (content: string, maxLength: number = 120) => {
-    const plainText = content.replace(/#{1,6}\s+/g, '').replace(/\*\*/g, '').replace(/\*/g, '');
-    if (plainText.length <= maxLength) return plainText;
-    return plainText.substring(0, maxLength) + '...';
-  };
 
   if (isLoading) {
     return (
@@ -101,7 +74,7 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentSlug }) => {
                     </Link>
                   </h3>
                   <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
-                    {post.metaDescription || truncateContent(post.content)}
+                    {post.metaDescription || post.excerpt}
                   </p>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
@@ -110,7 +83,7 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentSlug }) => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {getReadingTime(post.content)} min
+                      {post.readTime}
                     </div>
                   </div>
                 </div>

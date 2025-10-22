@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useMemo } from 'react';
 import BlogCard from '@/components/BlogCard';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, TrendingUp, Clock, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import { staticBlogPosts } from '@/data/staticData';
 
 const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: posts, isLoading } = useQuery({
-    queryKey: ['/api/blog/posts'],
-  });
+  // Use static blog posts
+  const posts = staticBlogPosts;
+  const isLoading = false;
 
   const categories = [
     { id: 'all', name: 'All Posts', icon: Star },
@@ -22,12 +22,14 @@ const Blog: React.FC = () => {
     { id: 'tax', name: 'Tax', icon: Clock },
   ];
 
-  const filteredPosts = Array.isArray(posts) ? posts.filter((post: any) => {
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  }) : [];
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => {
+      const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [posts, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -118,17 +120,17 @@ const Blog: React.FC = () => {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts?.map((post: any) => (
+            {filteredPosts?.map((post) => (
               <BlogCard
                 key={post.id}
-                id={post.id}
+                id={post.id.toString()}
                 slug={post.slug}
                 title={post.title}
-                excerpt={post.metaDescription || post.content?.substring(0, 150) + '...'}
-                author="RegisterInKSA Team"
+                excerpt={post.excerpt}
+                author={post.author}
                 date={post.createdAt}
-                readTime="5 min read"
-                category="Business Setup"
+                readTime={post.readTime}
+                category={post.category}
                 image={post.featuredImage}
               />
             ))}
